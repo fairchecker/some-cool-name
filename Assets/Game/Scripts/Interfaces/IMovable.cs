@@ -1,9 +1,10 @@
-using 
+using UnityEngine;
 
-namespace Game.Scripts
+namespace Interfaces
 {
-    public interface IMovable 
+    public interface IMovable
     {
-        
+        public float Speed();
+        public void Move(Vector2 direction);
     }
 }

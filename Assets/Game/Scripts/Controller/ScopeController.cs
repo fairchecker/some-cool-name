@@ -10,6 +10,6 @@ public class ScopeController : MonoBehaviour
     }
     private void Update()
     {
-        _rectTransform.position = Input.mousePosition;
+        transform.position = Input.mousePosition;
     }
 }
