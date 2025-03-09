@@ -12,7 +12,7 @@ namespace View
         {
             var actorObject = Instantiate(actor);
             actorObject.transform.position = transform.position;
-            actorObject.GetComponent<ActorView>().Initialize(2f);
+            actorObject.GetComponent<ActorView>().Initialize(10f);
             cineCamera.Follow = actorObject.transform;
             cineCamera.LookAt = actorObject.transform;
         }

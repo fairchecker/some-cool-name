@@ -13,6 +13,7 @@ namespace Controller
         {
             Actions = new InputSystem_Actions();
             Actions.Enable();
+            Actions.Player.Attack.performed += OnShootPerformed;
             _actor = GetComponent<IMovable>();
             _gunScript = GameObject.Find("Gun").GetComponent<GunScript>();
         }
@@ -20,14 +21,34 @@ namespace Controller
         private void FixedUpdate()
         {
             ReadMovement();
-            transform.LookAt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            GetMousePosition();
         }
 
-        private void Update()
+        private void OnShootPerformed(InputAction.CallbackContext ctx)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            _gunScript.Shoot();
+        }
+        
+        private void GetMousePosition()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray);
+
+            foreach (RaycastHit hit in hits)
             {
-                _gunScript.Shoot();
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    Vector3 targetPoint = hit.point;
+                    Vector3 direction = targetPoint - transform.position;
+                    direction.y = 0;
+
+                    if (direction.sqrMagnitude > 0.01f)
+                    {
+                        Quaternion targetRotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 270, 0);
+                        transform.rotation = targetRotation;
+                    }
+                    break;
+                }
             }
         }
 

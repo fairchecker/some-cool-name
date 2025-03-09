@@ -6,6 +6,7 @@ TagManager:
   tags:
   - bullet
   - kill
+  - Ground
   layers:
   - Default
   - TransparentFX

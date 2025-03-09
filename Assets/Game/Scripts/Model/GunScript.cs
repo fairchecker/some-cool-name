@@ -2,47 +2,56 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
-    [SerializeField]
-    int buletsCount = 5;
-    [SerializeField]
-    float reloadTime = 0.5f;
-    [SerializeField]
-    Transform shootPos; // Точка старта
-    [SerializeField]
-    Mesh bulletMesh;
-    [SerializeField]
-    Vector3 bulletSize = new Vector3(0.1f, 0.1f, 0.1f);
-    [SerializeField]
-    Material bulletMaterial;
-    [SerializeField]
-    float bulletSpeed = 10f;
+    [SerializeField] int bulletsCount = 5;
+    [SerializeField] float reloadTime = 0.5f;
+    [SerializeField] Transform shootPos;
+    [SerializeField] Mesh bulletMesh;
+    [SerializeField] Vector3 bulletSize = new Vector3(0.1f, 0.1f, 0.1f);
+    [SerializeField] Material bulletMaterial;
+    [SerializeField] float bulletSpeed = 100f;
+    [SerializeField] float spreadAngle = 10f;
 
     bool canShoot = true;
 
     public void Shoot()
     {
         if (!canShoot) return;
-        for (int i = 0; i < buletsCount; i++)
+
+        for (int i = 0; i < bulletsCount; i++)
         {
             GameObject tmp = new GameObject("Bullet");
-            // Задаём позицию пули в точке старта
             tmp.transform.position = shootPos.position;
-            // Вычисляем направление от позиции объекта (пушки) к точке старта
-            Vector3 direction = (shootPos.position - transform.position).normalized;
-            // Устанавливаем локальное направление пули (ось Z)
+
+            // РћСЃРЅРѕРІРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ РІС‹СЃС‚СЂРµР»Р° (РѕС‚ РѕСЂСѓР¶РёСЏ)
+            Vector3 direction = (shootPos.forward).normalized;
+
+            // Р”РѕР±Р°РІР»СЏРµРј СЃР»СѓС‡Р°Р№РЅРѕРµ РѕС‚РєР»РѕРЅРµРЅРёРµ
+            Quaternion randomSpread = Quaternion.Euler(
+                Random.Range(-spreadAngle, spreadAngle), // РћС‚РєР»РѕРЅРµРЅРёРµ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
+                Random.Range(-spreadAngle, spreadAngle) + 90, // РћС‚РєР»РѕРЅРµРЅРёРµ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+                0f); 
+
+            direction = randomSpread * direction; // РџСЂРёРјРµРЅСЏРµРј СЂР°Р·Р±СЂРѕСЃ
+
+            // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅР°РїСЂР°РІР»РµРЅРёРµ РїСѓР»Рё
             tmp.transform.forward = direction;
 
-            // Добавляем скрипт пули и устанавливаем скорость
+            // Р”РѕР±Р°РІР»СЏРµРј РєРѕРјРїРѕРЅРµРЅС‚ Bullet
             Bullet bulletComponent = tmp.AddComponent<Bullet>();
             bulletComponent.speed = bulletSpeed;
 
-            tmp.AddComponent<BoxCollider>();
-            tmp.AddComponent<Rigidbody>();
+            var collider = tmp.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+            var rigidbody = tmp.AddComponent<Rigidbody>();
+            rigidbody.isKinematic = false;
+            rigidbody.freezeRotation = true;
+
             tmp.AddComponent<MeshRenderer>().material = bulletMaterial;
             tmp.AddComponent<MeshFilter>().mesh = bulletMesh;
             tmp.transform.localScale = bulletSize;
             tmp.tag = "bullet";
         }
+
         canShoot = false;
         Invoke("Reload", reloadTime);
     }
@@ -50,27 +59,24 @@ public class GunScript : MonoBehaviour
     {
         canShoot = true;
     }
+    
 }
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 10f;
+    public float speed = 100f;
 
     private void FixedUpdate()
     {
-        // Перемещаем пулю вперёд относительно её локальной оси Z
-        transform.Translate(Vector3.forward * speed * Time.fixedDeltaTime);
+        transform.Translate(Vector3.forward * (speed * Time.fixedDeltaTime));
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!collision.transform.CompareTag("bullet"))
+        if(other.tag == "bullet") return;
+        if (other.transform.CompareTag("enemy")) 
         {
-            if (collision.transform.CompareTag("enemy"))
-            {
-                // Обработка попадания во врага
-            }
-            Destroy(gameObject);
         }
+        Destroy(gameObject);
     }
 }
