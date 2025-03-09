@@ -77,6 +77,7 @@ public class Bullet : MonoBehaviour
         if(other.tag == "bullet") return;
         if (other.transform.CompareTag("enemy")) 
         {
+            other.gameObject.GetComponent<EnemyView>().DealDamage(50);
         }
         Destroy(gameObject);
     }

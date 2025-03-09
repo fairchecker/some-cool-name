@@ -38,14 +38,18 @@ public class TurrelScript : MonoBehaviour
         textd.text = health.ToString() + "/" + maxHealth.ToString();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("enemy"))
+        if (other.gameObject.CompareTag("enemy"))
         {
             health--;
             hpSlider.value = health;
             textd.text = health.ToString() + "/" + maxHealth.ToString();
-            if (health == 0) stop = true;
+            if (health <= 0)
+            {
+                stop = true;
+                
+            }
         }    
     }
 
