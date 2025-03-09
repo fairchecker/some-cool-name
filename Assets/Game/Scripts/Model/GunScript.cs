@@ -50,6 +50,7 @@ public class GunScript : MonoBehaviour
             tmp.AddComponent<MeshFilter>().mesh = bulletMesh;
             tmp.transform.localScale = bulletSize;
             tmp.tag = "bullet";
+            Destroy(tmp, 10);
         }
 
         canShoot = false;

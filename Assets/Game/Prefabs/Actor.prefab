@@ -300,13 +300,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a888e3dce3dda7a42b7b80ee3ae687e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buletsCount: 11
+  bulletsCount: 12
   reloadTime: 0.47
   shootPos: {fileID: 7062875755671869587}
   bulletMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   bulletSize: {x: 0.4, y: 0.4, z: 0.4}
   bulletMaterial: {fileID: 2100000, guid: fd8dd3b1fb1858c468c82ab75e3d2087, type: 2}
   bulletSpeed: 100
+  spreadAngle: 10
 --- !u!4 &5499362856839647060 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5a6dd22932e2a1147bd4f59ffb7b0514, type: 3}
